@@ -33,9 +33,9 @@ _main:
 	mov	ecx, 100
 	cdq
 	mov	DWORD PTR [esp], OFFSET FLAT:LC0
-	idiv	ecx # edx:eax \ ecx
+	idiv	ecx
 	mov	DWORD PTR [ebp-12], -1
-	lea	ebx, [edx+1]
+	lea	ebx, [edx+1] #ebx is the number the user has to guess
 	call	_puts
 L2:
 	mov	DWORD PTR [esp], OFFSET FLAT:LC1
