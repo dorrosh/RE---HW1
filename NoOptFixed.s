@@ -28,19 +28,19 @@ _main:
 	mov	DWORD PTR [esp], eax
 	call	_srand
 	call	_rand
-	mov	ecx, eax #eax - random num
+	mov	ecx, eax
 	mov	edx, 1374389535
-	mov	eax, ecx #eax remains unchanged ??
+	mov	eax, ecx
 	imul	edx
-	sar	edx, 5 # edx = edx / 32
-	mov	eax, ecx #ecx random num
-	sar	eax, 31 #eax 0 or 1
-	sub	edx, eax # edx = edx-eax
+	sar	edx, 5
+	mov	eax, ecx
+	sar	eax, 31
+	sub	edx, eax
 	mov	eax, edx
 	imul	eax, eax, 100
 	sub	ecx, eax
 	mov	eax, ecx
-	add	eax, 1 
+	add	eax, 1
 	mov	DWORD PTR [ebp-4], eax
 	mov	DWORD PTR [ebp-8], -1
 	mov	DWORD PTR [esp], OFFSET FLAT:LC0
@@ -53,7 +53,7 @@ L6:
 	mov	DWORD PTR [esp], OFFSET FLAT:LC2
 	call	_scanf
 	mov	eax, DWORD PTR [ebp-8]
-	cmp	eax, DWORD PTR [ebp-4] #ebp-4 "magic number" epb-8 "our guess" eax - ours
+	cmp	eax, DWORD PTR [ebp-4]
 	je	L4
 	jl  L2
 	mov	DWORD PTR [esp], OFFSET FLAT:LC3
