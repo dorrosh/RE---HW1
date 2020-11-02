@@ -1,0 +1,2 @@
+1. printf vs puts 
+2. calling convention - preserve values
