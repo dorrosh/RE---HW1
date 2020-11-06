@@ -4,7 +4,9 @@ main:
 	push	esi
 	push	ebx
 	and	esp, -16
-	sub	esp, 80
+	sub	esp, 88
+	mov DWORD PTR [esp+80], 0
+	mov DWORD PTR [esp+84], 0
 	mov	DWORD PTR [esp+60], 0
 	mov	DWORD PTR [esp+64], 0
 	mov	DWORD PTR [esp+68], 0
@@ -22,9 +24,9 @@ L6:
 	push 0x0000706d 	# mp, null
 	push 0x63727473		# c, r, t, s
 	push esp            # push pointer for "strcmp"
-	push [esp+68]            # push module handle for msvcrt
-	call [esp+68]            # call GetProcAddress(msvcrt, "strcmp")
-	add esp, 0x08       # clear stack (note arguments are cleared already)
+	push [esp+96]            # push module handle for msvcrt
+	call [esp+96]            # call GetProcAddress(
+	add esp, 0x08       # clear stack (note arguments a
 	lea	ecx, [esp+60]	# ecx is not backed up - check cdecl convention
 	push 0x00000000 # null
 	push 0x64616f72 # d, a, o, r
@@ -32,7 +34,6 @@ L6:
 	push ecx
 	call eax # call strcmp
 	add esp, 0x10
-	
 	test eax, eax	 
 	jne	L3
 	mov	eax, DWORD PTR [esp+40]	 
@@ -47,11 +48,10 @@ L3:
 	push 0x0000706d # mp, null
 	push 0x63727473 # strc
 	push esp            # push pointer for "strcmp"
-	push edi            # push module handle for msvcrt
-	call edx            # call GetProcAddress(msvcrt, "strcmp")
+	push [esp+96]            # push module handle for msvcrt
+	call [esp+96]            # call GetProcAddress(msvcrt)
 	add esp, 0x08       # clear stack (note arguments are cleared already)
 	lea	ecx, [esp+60]	# ecx is not backed up - check cdecl convention
-	mov	DWORD PTR [esp], ecx
 	push 0x0000746e #
 	push 0x656d656c # 
 	push 0x74746573 # t ,t, e, s
@@ -80,11 +80,10 @@ L5:
 	push 0x0000706d # mp, null
 	push 0x63727473 # strc
 	push esp            # push pointer for "strcmp"
-	push edi            # push module handle for msvcrt
-	call edx            # call GetProcAddress(msvcrt, "strcmp")
+	push [esp+96]            # push module handle for msvcrt
+	call [esp+96]            # call GetProcAddress(msvcrt)
 	add esp, 0x08       # clear stack (note arguments are cleared already)
 	lea	ecx, [esp+60]	# ecx is not backed up - check cdecl convention
-	mov	DWORD PTR [esp], ecx
 	push 0x00000000 # null
 	push 0x79746963 # y, t, i, c
 	push esp
@@ -106,11 +105,10 @@ L4:
 	push 0x0000706d 	# mp, null
 	push 0x63727473 	# strc
 	push esp            # push pointer for "strcmp"
-	push edi            # push module handle for msvcrt
-	call edx            # call GetProcAddress(msvcrt, "strcmp")
+	push [esp+96]            # push module handle for msvcrt
+	call [esp+96]            # call GetProcAddress(msvcrt)
 	add esp, 0x08       # clear stack (note arguments are cleared already)
 	lea	ecx, [esp+60]	# ecx is not backed up - check cdecl convention
-	mov	DWORD PTR [esp], ecx
 	push 0x00746e65 # 
 	push 0x6d706f6c # 
 	push 0x65766564 #
@@ -159,38 +157,32 @@ L2:
 	call FindFunction   # call FindFunction("GetProcAddress")
 	add esp, 0x14       # clear stack
 	pop ebx             # restore module handle for msvcrt
-	mov [esp+56], ebx # 56 - msvcrt
-	mov [esp+52], eax # 52 - GetProcAddress
-	
+	mov [esp+84], ebx # 84 - msvcrt
+	mov [esp+80], eax # 80 - GetProcAddress
+
 	push 0x00000066
 	push 0x6e616373
 	push esp
-	push [esp+68]
-	#mov DWORD PTR [esp+12], 0x00000066		# pushing null,f
-	#mov DWORD PTR [esp+8], 0x6e616373		# pushing n,a,c,s
+	push [esp+96]
 	#mov edi, ebx 
 	#mov edx, eax 		# save GetProcAddress address
-	call [esp+68]           # call GetProcAddress(msvcrt, "scanf")
-	#sub esp, 8
-	add esp, 0x08      # clear stack (note arguments are cleared already)	
-	#push ebx
+	call [esp+96]           
+	add esp, 0x08      # clear stack (note arguments are)
 	lea ebx, [esp+60]
-	push ebx
 	push 0x00007325
-	push esp
-	#mov	DWORD PTR [esp+8], 0x00007325 # "&s\0"
+	push ebx #put the array address
+	lea ebx, [esp+4]
+	push ebx #put the string address
+	#mov	DWORD PTR [esp+8], 0x00007325 # "%s\0"
 	#mov	ebx, DWORD PTR [esp+60]
 	#mov	DWORD PTR [esp+4], ebx
-	#lea ebx, [esp+8]
-	#mov [esp], ebx
 
 	call eax             # call scanf
 	#add esp, 0x14       # clear stack
-	#call	_scanf
 	add esp, 0x0c
 	cmp	eax, -1 #EOF
 	jne	L6	 
- # mainShort:c:33:     printf("%02d %02d %02d %02d %02d",resources[0], resources[1], #resources[2], resources[3], resources[4])
+	
 	mov	esi, DWORD PTR [esp+44]
 	mov	DWORD PTR [esp+8], esi
 	mov	esi, DWORD PTR [esp+56]	 
@@ -200,14 +192,14 @@ L2:
 	mov	DWORD PTR [esp+20], esi	 
 	mov	DWORD PTR [esp+16], ebx	 
 	mov	DWORD PTR [esp+12], ecx	
-	mov	DWORD PTR [esp+4], eax	 
+	mov	DWORD PTR [esp+4], eax 	 
 	
-	push 0x00000066		# pushing null,f,t
-	push 0x6e616373		# pushing n,i,r,p
+	push 0x00006674		# pushing null,f,t
+	push 0x6e697270		# pushing n,i,r,p
 	push esp            # push pointer for "printf"
-	push [esp+68]       # push module handle for msvcrt
+	push [esp+96]       # push module handle for msvcrt
 	
-	call [esp+68]       # call GetProcAddress(msvcrt, "printf")
+	call [esp+96]       # call GetProcAddress(msvcrt, "printf")
 	add esp, 0x08       # clear stack (note arguments are cleared already)
 
 	push 0x00000000 # "null"
@@ -219,10 +211,10 @@ L2:
 	push 0x64323025 # "%02d"
 	lea ecx, [esp]
 	push [esp+48]
-	push [esp+44]
-	push [esp+40]
-	push [esp+36]
-	push [esp+32]
+	push [esp+48]
+	push [esp+48]
+	push [esp+48]
+	push [esp+48]
 	push ecx
 	call eax		# call	printf
 	mov	eax, 0 		# return 0
